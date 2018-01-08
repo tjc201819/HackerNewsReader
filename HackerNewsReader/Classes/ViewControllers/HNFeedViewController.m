@@ -27,6 +27,7 @@
 #import "HNSearchPostsController.h"
 #import "HNLoginViewController.h"
 #import "HNLogin.h"
+#import "UIColor+HackerNews.h"
 
 typedef NS_ENUM(NSUInteger, HNFeedViewControllerSection) {
     HNFeedViewControllerSectionData,
@@ -65,16 +66,27 @@ static NSUInteger const kItemsPerPage = 30;
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-    self.edgesForExtendedLayout = UIRectEdgeNone;
-    self.automaticallyAdjustsScrollViewInsets = NO;
-    self.extendedLayoutIncludesOpaqueBars = YES;
-
     self.splitViewController.preferredDisplayMode = UISplitViewControllerDisplayModeAllVisible;
 
-    self.searchPostsController = [[HNSearchPostsController alloc] initWithContentsController:self readPostStore:self.readPostStore];
+    self.searchPostsController = [[HNSearchPostsController alloc] initWithOriginalController:self andReadPostStore:self.readPostStore];
     self.definesPresentationContext = YES;
-    self.tableView.tableHeaderView = [self.searchPostsController searchBar];
 
+    UIRefreshControl *refresh = [[UIRefreshControl alloc] init];
+    [refresh addTarget:self action:@selector(onRefresh:) forControlEvents:UIControlEventValueChanged];
+    self.refreshControl = refresh;
+
+    if (@available(iOS 11.0, *)) {
+        self.navigationItem.searchController = _searchPostsController;
+        [refresh setTintColor:[UIColor hn_navigationTintColor]];
+    } else {
+        self.edgesForExtendedLayout = UIRectEdgeNone;
+        self.automaticallyAdjustsScrollViewInsets = NO;
+        self.extendedLayoutIncludesOpaqueBars = YES;
+        
+        self.tableView.tableHeaderView = [self.searchPostsController searchBar];
+        [self.searchPostsController.searchBar sizeToFit];
+    }
+    
     [self fetchWithParams:nil refresh:YES];
 
     self.feedDataSource = [[HNFeedDataSource alloc] initWithTableView:self.tableView readPostStore:self.readPostStore];
@@ -85,16 +97,16 @@ static NSUInteger const kItemsPerPage = 30;
     self.tableStatus = [[HNTableStatus alloc] initWithTableView:self.tableView emptyMessage:emptyMessage];
     self.tableStatus.sections = HNFeedViewControllerSectionCount;
 
-    UIRefreshControl *refresh = [[UIRefreshControl alloc] init];
-    [refresh addTarget:self action:@selector(onRefresh:) forControlEvents:UIControlEventValueChanged];
-    self.refreshControl = refresh;
-
     self.navigationItem.backBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"" style:UIBarButtonItemStylePlain target:nil action:nil];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     [self.navigationController hn_setHidesBarsOnSwipe:NO navigationBarHidden:NO toolbarHidden:YES animated:animated];
+    
+    if (@available(iOS 11.0, *)) {
+        self.navigationItem.hidesSearchBarWhenScrolling = NO;
+    }
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -105,10 +117,10 @@ static NSUInteger const kItemsPerPage = 30;
     if (self.dataCoordinator.isFetching) {
         [self hn_insertActivityIndicator];
     }
-}
-
-- (UISearchDisplayController *)searchDisplayController {
-    return self.searchPostsController;
+    
+    if (@available(iOS 11.0, *)) {
+        self.navigationItem.hidesSearchBarWhenScrolling = YES;
+    }
 }
 
 
