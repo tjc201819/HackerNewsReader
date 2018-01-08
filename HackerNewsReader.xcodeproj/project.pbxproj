@@ -82,6 +82,7 @@
 		29EA87DE1DD7AC9200B6F84A /* libxml2.2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 29EA87DD1DD7AC9200B6F84A /* libxml2.2.tbd */; };
 		29EA87E51DD7ACFC00B6F84A /* NSURL+HackerNewsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 29EA87E11DD7ACF300B6F84A /* NSURL+HackerNewsTests.m */; };
 		58FBF42904A3BAC63095A11D /* Pods_HackerNewsReader.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 11E97AC09D67B152186BF4B6 /* Pods_HackerNewsReader.framework */; };
+		7556A2AE200387B60097841F /* UIBarButtonItem+HackerNews.m in Sources */ = {isa = PBXBuildFile; fileRef = 7556A2AD200387B60097841F /* UIBarButtonItem+HackerNews.m */; };
 		75642A102002D3F6003AC045 /* NHResultsController.m in Sources */ = {isa = PBXBuildFile; fileRef = 75642A0F2002D3F6003AC045 /* NHResultsController.m */; };
 /* End PBXBuildFile section */
 
@@ -244,6 +245,8 @@
 		29EA87DD1DD7AC9200B6F84A /* libxml2.2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libxml2.2.tbd; path = usr/lib/libxml2.2.tbd; sourceTree = SDKROOT; };
 		29EA87E01DD7ACF300B6F84A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		29EA87E11DD7ACF300B6F84A /* NSURL+HackerNewsTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSURL+HackerNewsTests.m"; sourceTree = "<group>"; };
+		7556A2AC200387B60097841F /* UIBarButtonItem+HackerNews.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIBarButtonItem+HackerNews.h"; sourceTree = "<group>"; };
+		7556A2AD200387B60097841F /* UIBarButtonItem+HackerNews.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIBarButtonItem+HackerNews.m"; sourceTree = "<group>"; };
 		75642A0E2002D3F6003AC045 /* NHResultsController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NHResultsController.h; sourceTree = "<group>"; };
 		75642A0F2002D3F6003AC045 /* NHResultsController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NHResultsController.m; sourceTree = "<group>"; };
 		D231C5C33344FF1151733EC4 /* Pods-HackerNewsReader.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HackerNewsReader.release.xcconfig"; path = "Pods/Target Support Files/Pods-HackerNewsReader/Pods-HackerNewsReader.release.xcconfig"; sourceTree = "<group>"; };
@@ -336,6 +339,8 @@
 				29EA870A1DD7AAAA00B6F84A /* UIFont+HackerNews.m */,
 				29EA870B1DD7AAAA00B6F84A /* UINavigationBar+HackerNews.h */,
 				29EA870C1DD7AAAA00B6F84A /* UINavigationBar+HackerNews.m */,
+				7556A2AC200387B60097841F /* UIBarButtonItem+HackerNews.h */,
+				7556A2AD200387B60097841F /* UIBarButtonItem+HackerNews.m */,
 				29EA870D1DD7AAAA00B6F84A /* UINavigationController+HNBarState.h */,
 				29EA870E1DD7AAAA00B6F84A /* UINavigationController+HNBarState.m */,
 				29EA870F1DD7AAAA00B6F84A /* UITabBar+HackerNews.h */,
@@ -789,6 +794,7 @@
 				29EA879F1DD7AAAA00B6F84A /* HNPost.m in Sources */,
 				29EA87B31DD7AAAA00B6F84A /* HNReadPostStore.m in Sources */,
 				29EA87A01DD7AAAA00B6F84A /* HNUser.m in Sources */,
+				7556A2AE200387B60097841F /* UIBarButtonItem+HackerNews.m in Sources */,
 				29EA87CA1DD7AAAA00B6F84A /* HNPageHeaderView.m in Sources */,
 				29EA87CB1DD7AAAA00B6F84A /* HNPostCell.m in Sources */,
 				29EA87AB1DD7AAAA00B6F84A /* HNSessionManager.m in Sources */,
