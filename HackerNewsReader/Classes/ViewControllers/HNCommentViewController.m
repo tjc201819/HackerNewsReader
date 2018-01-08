@@ -412,7 +412,14 @@ MFMailComposeViewControllerDelegate
 
             NSUInteger indent = comment.indent;
             UIEdgeInsets insets = [HNCommentCell contentInsetsForIndentationLevel:indent indentationWidth:kCommentCellIndentationWidth];
-            CGFloat width = CGRectGetWidth(self.view.bounds) - insets.left - insets.right;
+            
+            __block CGFloat viewWidth;
+            dispatch_async(dispatch_get_main_queue(), ^{
+                viewWidth = CGRectGetWidth(self.view.bounds);
+            });
+            
+            CGFloat width = viewWidth - insets.left - insets.right;
+            
             // warms the store
             (void)[self.textStorage heightForAttributedString:str width:width];
         }
