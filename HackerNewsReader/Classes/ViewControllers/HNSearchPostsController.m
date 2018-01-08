@@ -8,100 +8,56 @@
 
 #import "HNSearchPostsController.h"
 
-#import "HNPost.h"
-
-#import "HNFeedDataSource.h"
-#import "HNPostCell.h"
 #import "HNReadPostStore.h"
-#import "HNPostControllerHandling.h"
-#import "UIViewController+UISplitViewController.h"
-#import "HNCommentViewController.h"
+#import "NHResultsController.h"
+#import "UIColor+HackerNews.h"
 
-@interface HNSearchPostsController ()
-<UISearchDisplayDelegate, UITableViewDataSource, UITableViewDelegate, HNPostCellDelegate>
-
-@property (nonatomic, strong) HNFeedDataSource *feedDataSource;
-@property (nonatomic, strong) HNReadPostStore *readPostStore;
+@interface HNSearchPostsController () <UISearchResultsUpdating>
 
 @end
 
 @implementation HNSearchPostsController
 
-- (instancetype)initWithContentsController:(UIViewController *)viewController
-                             readPostStore:(HNReadPostStore *)readPostStore {
-    UISearchBar *searchBar = [[UISearchBar alloc] init];
-    [searchBar sizeToFit];
-    if (self = [super initWithSearchBar:searchBar contentsController:viewController]) {
-        self.delegate = self;
-        self.searchResultsTableView.delegate = self;
-        self.searchResultsTableView.dataSource = self;
-        _readPostStore = readPostStore;
+- (instancetype)initWithOriginalController:(UIViewController *)viewController andReadPostStore:(HNReadPostStore *)readPostStore {
+    NHResultsController *resultsController = [[NHResultsController alloc]
+            initWithOriginalController:viewController
+                      andReadPostStore:readPostStore];
+
+    if (self = [super initWithSearchResultsController:resultsController]) {
+        self.hidesNavigationBarDuringPresentation = YES;
+        self.searchResultsUpdater = self;
+
+        if (@available(iOS 11.0, *)) {
+            [self themeSearchBar];
+        }
     }
+
     return self;
 }
 
+#pragma mark - UISearchResultsUpdating
 
-#pragma mark - Actions
+- (void)updateSearchResultsForSearchController:(UISearchController *)searchController {
+    NSString *query = searchController.searchBar.text.lowercaseString;
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"title CONTAINS[cd] %@", query];
 
-- (void)didSelectPostAtIndexPath:(NSIndexPath *)indexPath {
-    HNPost *post = self.feedDataSource.posts[indexPath.row];
-    [self.readPostStore readPK:post.pk];
-    [self.searchResultsTableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+    NSArray *filteredPosts = [self.posts filteredArrayUsingPredicate:predicate];
 
-    UIViewController *controller = viewControllerForPost(post);
-    [self.searchContentsController hn_showDetailViewControllerWithFallback:controller];
+    NHResultsController *resultsController = (NHResultsController *) self.searchResultsController;
+    [resultsController setPosts:filteredPosts];
 }
 
-- (void)didSelectPostCommentAtIndexPath:(NSIndexPath *)indexPath {
-    HNPost *post = self.feedDataSource.posts[indexPath.row];
-    HNCommentViewController *commentController = [[HNCommentViewController alloc] initWithPostID:post.pk];
-    [self.searchContentsController hn_showDetailViewControllerWithFallback:commentController];
-}
+#pragma mark - Private
 
+- (void)themeSearchBar {
+    self.searchBar.searchBarStyle = UISearchBarStyleMinimal;
+    self.searchBar.backgroundColor = [UIColor clearColor];
 
-#pragma mark - UISearchDisplayDelegate
-
-- (void)searchDisplayController:(UISearchDisplayController *)controller didLoadSearchResultsTableView:(UITableView *)tableView {
-    self.feedDataSource = [[HNFeedDataSource alloc] initWithTableView:tableView readPostStore:nil];
-}
-
-- (BOOL)searchDisplayController:(UISearchDisplayController *)controller shouldReloadTableForSearchString:(NSString *)searchString {
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"title CONTAINS[cd] %@", [self searchBar].text.lowercaseString];
-    self.feedDataSource.posts = [self.posts filteredArrayUsingPredicate:predicate];
-    return YES;
-}
-
-
-#pragma mark - UITableViewDataSource
-
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return self.feedDataSource.posts.count;
-}
-
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    HNPostCell *cell = [self.feedDataSource cellForPostAtIndexPath:indexPath];
-    cell.delegate = self;
-    return cell;
-}
-
-
-#pragma mark - UITableViewDelegate
-
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    return [self.feedDataSource heightForPostAtIndexPath:indexPath];
-}
-
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    [self didSelectPostAtIndexPath:indexPath];
-}
-
-
-#pragma mark - HNPostCellDelegate
-
-- (void)postCellDidTapCommentButton:(HNPostCell *)postCell {
-    NSIndexPath *indexPath = [self.searchResultsTableView indexPathForCell:postCell];
-    [self didSelectPostCommentAtIndexPath:indexPath];
+    UITextField *textField = [self.searchBar valueForKey:@"searchField"];
+    UIView *backgroundView = textField.subviews.firstObject;
+    backgroundView.backgroundColor = [UIColor hn_navigationTintColor];
+    backgroundView.layer.cornerRadius = 10;
+    backgroundView.clipsToBounds = YES;
 }
 
 @end

@@ -10,14 +10,14 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class HNPost, HNReadPostStore;
+@class HNReadPostStore;
 
-@interface HNSearchPostsController : UISearchDisplayController
+@interface HNSearchPostsController : UISearchController
 
-- (instancetype)initWithContentsController:(UIViewController *)viewController
-                             readPostStore:(HNReadPostStore *)readPostStore NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithOriginalController:(UIViewController *)viewController
+                          andReadPostStore:(HNReadPostStore *)readPostStore NS_DESIGNATED_INITIALIZER;
 
-@property (nonatomic, copy) NSArray *posts;
+@property(nonatomic, copy) NSArray *posts;
 
 @end
 
